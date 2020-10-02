@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+require 'fileutils'
+
+# path to your application root.
+APP_ROOT = File.expand_path('..', __dir__)
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+FileUtils.chdir APP_ROOT do
+  # Remove server.pid
+  system!("if [ -f tmp/pids/server.pid ]; then rm tmp/pids/server.pid ; fi")
+
+  # Install gems/libs
+  system!("bundle install")
+  system!("yarn install")
+
+  # Database
+  system!("rails db:migrate || rails db:setup")
+
+  # Start Server
+  system!("rails s -b '0.0.0.0'")
+end

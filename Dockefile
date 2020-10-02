@@ -1,0 +1,77 @@
+FROM ruby:2.7.1-alpine as builder
+
+ENV RAILS_ENV production
+ENV RAILS_LOG_TO_STDOUT true
+ENV RAILS_SERVE_STATIC_FILES true
+
+# Install dependencies
+RUN apk add --no-cache \
+  build-base \
+  busybox \
+  ca-certificates \
+  curl \
+  git \
+  gnupg1 \
+  imagemagick \
+  graphicsmagick \
+  libffi-dev \
+  libsodium-dev \
+  nodejs \
+  openssh-client \
+  postgresql-dev \
+  rsync \
+  tzdata \
+  yarn
+
+RUN mkdir -p /app
+WORKDIR /app
+
+COPY . /app/
+
+# Bundle install
+RUN bundle config --global frozen 1
+RUN bundle config set without 'development test'
+RUN bundle install -j4 --retry 3
+
+# Yarn install
+RUN yarn install
+
+# Clean files
+RUN rm -rf /usr/local/bundle/bundler/gems/*/.git \
+    /usr/local/bundle/cache/
+
+# Compile assets
+RUN bundle exec rails \
+  RAILS_ENV=production \
+  AWS_ACCESS_KEY_ID=placeholder \
+  AWS_SECRET_ACCESS_KEY=placeholder \
+  SECRET_KEY_BASE=placeholder \
+  assets:precompile
+
+FROM ruby:2.7.1-alpine
+
+ENV RAILS_ENV production
+ENV RAILS_LOG_TO_STDOUT true
+ENV RAILS_SERVE_STATIC_FILES true
+
+# Install dependencies
+RUN apk add --no-cache \
+  busybox \
+  ca-certificates \
+  curl \
+  gnupg1 \
+  imagemagick \
+  graphicsmagick \
+  libsodium-dev \
+  nodejs \
+  postgresql-dev \
+  tzdata \
+  rsync
+
+RUN mkdir -p /app
+WORKDIR /app
+
+COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+COPY --from=builder /app/ /app/
+
+EXPOSE 3000
