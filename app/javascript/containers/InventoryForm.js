@@ -10,6 +10,8 @@ class InventoryForm extends Component {
   }
 
 
+  
+
   render() {
     return (
       <form>
