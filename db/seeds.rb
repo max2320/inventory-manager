@@ -1,7 +1,32 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+
+
+[
+  {
+    name: 'Item 1',
+    meta: [{ key: 'quantity', value: '2' }],
+    category: 'Cat 1'
+  },
+  {
+    name: 'Item 2',
+    meta: [
+      { key: 'quantity', value: '2' },
+      { key: 'barcode', value: '123132aaa' }
+    ],
+    category: 'Cat 1'
+  },
+  {
+    name: 'Item 3',
+    meta: [
+      { key: 'box width (inches)', value: '29' }
+    ],
+    category: 'Cat 2'
+  }
+].each do |attrs|
+  item = Inventory.new(name: attrs[:name])
+  item.metas = attrs[:meta].map { |meta| Meta.new(meta) }
+
+  item.category = Category.find_or_create_by(name: attrs[:category])
+
+  item.save
+  puts "Item #{attrs[:name]} #{item.id}"
+end

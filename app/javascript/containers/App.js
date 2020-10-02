@@ -1,8 +1,9 @@
 import React from 'react';
+import Invetory from './Inventory';
 
 const App = () => (
   <div>
-    asdfasdfdddd
+    <Invetory />
   </div>
 )
 

@@ -1,30 +1,29 @@
 import { gql } from '@apollo/client';
 
-const INFRASTRUCTURE_MAP_LAYERS = gql`
-  query townInfrastructureMap($townId: Int!, $indicatorId: Int) {
-    townInfrastructureMap(id: $townId, indicatorId: $indicatorId) {
-      dataLayers {
-        name
-        source
-        layer
-        legend
-        allowedKeys
+const INVENTORY = gql`
+  query inventories {
+    inventories {
+      name
+      metas {
+        key
+        value
       }
-
-      styledLayers {
+      category {
         name
-        source
-        layer
-        legend
       }
-
-      center
-      zoom
     }
   }
 `;
 
+const CATEGORIES = gql`
+  query category {
+    category {
+      name
+    }
+  }
+`
 
 export {
-  INFRASTRUCTURE_MAP_LAYERS
+  INVENTORY,
+  CATEGORIES
 };

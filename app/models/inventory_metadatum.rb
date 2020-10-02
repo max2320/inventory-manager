@@ -1,2 +1,0 @@
-class InventoryMetadatum < ApplicationRecord
-end

@@ -6,7 +6,7 @@
 
 ## Build and start containers
 
-Run the `up` command on docker compose:
+Clone the repo and run the docker-compose up command:
 ```
 $ docker-compose up -d
 ```
